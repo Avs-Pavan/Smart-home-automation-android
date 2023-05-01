@@ -84,6 +84,7 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
+    implementation 'com.airbnb.android:lottie:6.0.0'
 
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
 

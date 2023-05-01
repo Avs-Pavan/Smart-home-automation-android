@@ -12,6 +12,7 @@ import android.os.Environment
 import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.anim.setAnimation("record.json")
 
         api = RetrofitInstance.getRetrofitInstance().create(Api::class.java)
 
@@ -104,7 +106,6 @@ class MainActivity : AppCompatActivity() {
                         ActivityCompat.requestPermissions(this, permissions, 0)
                     } else {
                         startRecording()
-
                     }
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -129,12 +130,16 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun stopRecording() {
         try {
+            binding.play.visibility = View.VISIBLE
+            binding.anim.setAnimation("record.json")
+//            binding.record.playAnimation()
+            binding.anim.pauseAnimation()
             recorder.stop()
             recorder.reset()
             recorder.release()
             Timber.e("Stop recording")
             Timber.e(output)
-            uploadImage(File(output), name)
+//            uploadImage(File(output), name)
 
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
@@ -143,6 +148,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun startRecording() {
         try {
+            binding.anim.setAnimation("music.json")
+            binding.anim.playAnimation()
             name = "recording.amr"
             val cw = ContextWrapper(this)
             val fullPath = cw.getExternalFilesDir(Environment.DIRECTORY_MUSIC).toString()
@@ -266,7 +273,8 @@ class MainActivity : AppCompatActivity() {
 //        }
         val alternative: SpeechRecognitionAlternative = results[0].alternativesList[0]
         speechClient.close()
-        processSpeech(alternative.transcript.lowercase(), image)
+        if (alternative.transcript.lowercase().isNotEmpty())
+            processSpeech(alternative.transcript.lowercase(), image)
     }
 
 
